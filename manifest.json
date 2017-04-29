@@ -11,7 +11,8 @@
   },
   "permissions": [
     "activeTab",
-    "https://ajax.googleapis.com/"
+    "https://ajax.googleapis.com/",
+    "storage"
   ],
   "background": {
     "scripts": ["jquery-3.2.1.min.js"]
@@ -21,5 +22,11 @@
             "matches": ["https://www.messenger.com/*"],
             "js": ["jquery-3.2.1.min.js", "new.js"]
         }      
-  ]
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+  "options_page": "options.html"
+
 }
