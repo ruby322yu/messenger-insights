@@ -57,7 +57,7 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
                 // messageStrings.push(string);
                 
                 if (important(string, senderName, numReacts)) {
-                    sendCurr = true;
+                    curr.use.push(true);
                 } else {
                     curr.use.push(false);
                 }
@@ -69,7 +69,6 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
     };
 
     popup(sendData);
-
 });
 
 function important(text, sender, reacts){
