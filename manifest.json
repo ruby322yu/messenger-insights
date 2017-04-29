@@ -13,4 +13,11 @@
     "activeTab",
     "https://ajax.googleapis.com/"
   ]
+  ,
+  "content_scripts" : [
+        {
+            "matches": ["https://www.facebook.com/*"],
+            "js": ["new.js"]
+        }      
+  ]
 }
