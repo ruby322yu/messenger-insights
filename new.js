@@ -15,7 +15,7 @@ const Filters = {
     messageSpan: '[class="_3oh- _58nk"]',
     react: '._4kf5._4kf6',
     seen: '[class="_4jzq _jf4"]',
-    tooltip: '._3058._ui9._hh7',
+    tooltip: '[data-hover="tooltip"]',
 }
 
 chrome.storage.sync.get(['ignore_friends', 'topics', 'friends', 'min_reacts', 'always_ignore'], function(items) {
@@ -59,7 +59,6 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
                 // messageStrings.push(string);
                 
                 if (important(string, senderName, numReacts)) {
-                    console.log(string, "true");
                     curr.use.push(true);
                 } else {
                     curr.use.push(false);
@@ -94,11 +93,6 @@ function important(text, sender, reacts){
     }
     
     text = text.toLowerCase();
-    for (const friend of friends) {
-        if (text.includes(friend.toLowerCase())) {
-            return true;
-        }
-    }
     for (const topic of topics){
         if (text.includes(topic)){
             return true;
@@ -160,43 +154,52 @@ function popup(data) {
         let addChunk = false;
 
         //For each message inside a chunk
+        let showSep = true;
         for (let j = 0; j < childMessages.length; j++) {
             //Case 1: The message is relevant and so we must highlight it
             if (data[i].use[j]) {
                 //If a message is relevant, then we highlight it
                 childMessages.eq(j).find(Filters.tooltip).eq(0).css('background-color', 'yellow');
                 addChunk = true;
-            
+                if (j == 0 && i != 0) {
+                    // if previous chunk had a context message, don't show separator
+                    showSep = false;
+                }
+                continue;
+            }
             //Case 2: The message is the first in a non-first chunk, and the last message in the previous chunk is relevant
-            } else if (j == 0 && i != 0) {
+            if (j == 0 && i != 0) {
                 if (data[i-1].use[previousLength-1]) {
                     addChunk = true;
-                } else {
-                    childMessages.eq(j).css('display', 'none');
-                }
-
-            //Case 3: The message is the last in a non-last chunk, and the first message in the chunk after it is relevant
-            } else if (j == currentLength - 1 && i < len - 1) {
-                if (data[i+1].use[0]) {
-                    addChunk = true;
-                } else {
-                    childMessages.eq(j).css('display', 'none');
-                }
-
-            //Case 4: The message is is directly before or after a relevant message in the same chunk 
-            } else {
-                //Hide any messages in the chunk that aren't directly before or after it
-                if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
-                    addChunk = true;
-                } else {
-                    childMessages.eq(j).css('display', 'none');
+                    // don't show separator since this is connected
+                    showSep = false;
+                    continue;
                 }
             }
+            //Case 3: The message is the last in a non-last chunk, and the first message in the chunk after it is relevant
+            if (j == currentLength - 1 && i < len - 1) {
+                if (data[i+1].use[0]) {
+                    addChunk = true;
+                    continue;
+                }
+            } 
+            //Case 4: The message is is directly before or after a relevant message in the same chunk 
+            //Hide any messages in the chunk that aren't directly before or after it
+            if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
+                addChunk = true;
+                continue;
+            }
+
+            //Case 5: none of the above: fail
+            childMessages.eq(j).css('display', 'none');
         }
         if (addChunk) {
             const sep = $('<h4>').addClass('_497p _2lpt')
-                .append(data[i].chunk.find(Filters.tooltip).eq(0).attr('data-tooltip-content'));
-            $("#insert").append(sep).append(data[i].chunk);
+                .append(data[i].chunk.find(childMessages).eq(0).find(Filters.tooltip).eq(0).attr('data-tooltip-content'));
+            if (showSep) {
+                $("#insert").append(sep);
+            }
+            $("#insert").append(data[i].chunk);
         }
     }
     $("#insert").find(Filters.seen).eq(0).css('display', 'none');
