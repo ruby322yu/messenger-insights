@@ -27,51 +27,62 @@ chrome.storage.sync.get(['ignore_friends', 'topics', 'friends', 'min_reacts', 'a
 })
 
 console.log(min_reacts);
+$(setTimeout(function() {
+    console.log($('._1li_'));
+    $('._1li_').eq(0).children('._mh6').eq(0).append(
+        $('<div>').addClass('_3szn _3szo').attr({'role': 'button', 'tabindex': '0'}).append(
+            $('<div>').addClass('_3szp').append(
+                $('<img>').attr('src', 'https://static.xx.fbcdn.net/images/emoji.php/v8/z56/1/32/2757.png').addClass('_12cp')
+        )).append(
+            $('<em>').addClass('_3szq _4qba').attr('id', 'startButton').append("Summarise")
+        )
+    );
 
-$(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
-    const messages = $(Filters.messages).eq(0);
-    const messageList = messages.children(Filters.messageList).eq(0);
-    // scrape through your messages for important messages
-    const sendData = [];
-    for (const i in messageList.children()) {
-        const child = messageList.children().eq(i);
-        if (child.prop('tagName') === 'DIV' && !child.prop('class')) {
-            const sender = child.find('h5');
-            const senderName = sender.eq(0).prop("innerText");
-            // found a messsage chunk, iterate through to get individual messages
-            const curr = {
-                chunk: child.clone(),
-                use: [],
-            };
-            
-            const childMessages = child.find(Filters.childMessages);
-            for (let m = 0; m < childMessages.length; m++){
-                const div = childMessages.eq(m);
-                const span = div.find(Filters.messageSpan).eq(0);
-                const react = div.find(Filters.react).eq(0);
-                if (react.prop('innerText')) {
-                    numReacts = react.prop('innerText');
-                } else {
-                    numReacts = 0;
-                }
-                const string = span.prop('innerText');
-                // span is the element, string contains the actual message string
-                // messageStrings.push(string);
+    $(document).on('click', '#startButton'/*Filters.unreadMessagesButton*/, function(e) {
+        const messages = $(Filters.messages).eq(0);
+        const messageList = messages.children(Filters.messageList).eq(0);
+        // scrape through your messages for important messages
+        const sendData = [];
+        for (const i in messageList.children()) {
+            const child = messageList.children().eq(i);
+            if (child.prop('tagName') === 'DIV' && !child.prop('class')) {
+                const sender = child.find('h5');
+                const senderName = sender.eq(0).prop("innerText");
+                // found a messsage chunk, iterate through to get individual messages
+                const curr = {
+                    chunk: child.clone(),
+                    use: [],
+                };
                 
-                if (important(string, senderName, numReacts)) {
-                    curr.use.push(true);
-                } else {
-                    curr.use.push(false);
+                const childMessages = child.find(Filters.childMessages);
+                for (let m = 0; m < childMessages.length; m++){
+                    const div = childMessages.eq(m);
+                    const span = div.find(Filters.messageSpan).eq(0);
+                    const react = div.find(Filters.react).eq(0);
+                    if (react.prop('innerText')) {
+                        numReacts = react.prop('innerText');
+                    } else {
+                        numReacts = 0;
+                    }
+                    const string = span.prop('innerText');
+                    // span is the element, string contains the actual message string
+                    // messageStrings.push(string);
+                    
+                    if (important(string, senderName, numReacts)) {
+                        curr.use.push(true);
+                    } else {
+                        curr.use.push(false);
+                    }
                 }
+                sendData.push(curr);
+            } else if (child.prop('tagName') === 'H4') {
+                console.log("New time");
             }
-            sendData.push(curr);
-        } else if (child.prop('tagName') === 'H4') {
-            console.log("New time");
-        }
-    };
+        };
 
-    popup(sendData);
-});
+        popup(sendData);
+    });
+}, 2000));
 
 function important(text, sender, reacts){
     if (!text){
