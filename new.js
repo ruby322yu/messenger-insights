@@ -144,21 +144,42 @@ function popup(data) {
      * we do some complicated shit to give context across chunks
      */
 
+    previousLength = 0;
+    currentLength = 0;
     for (let i = 0, len = data.length; i < len; i++) {
         const childMessages = data[i].chunk.find(Filters.childMessages);
+        previousLength = currentLength;
+        currentLength = childMessages.length;
         let addChunk = false;
+
+        //For each message inside a chunk
         for (let j = 0; j < childMessages.length; j++) {
+            //Case 1: The message is relevant and so we must highlight it
             if (data[i].use[j]) {
-                // show message - relevant
+                //If a message is relevant, then we highlight it
                 childMessages.eq(j).find(Filters.messageSpan).eq(0).css('background-color', 'yellow');
                 addChunk = true;
-            } else {
-                if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
-                    // show message as context for a relevant message
+            
+            //Case 2: The message is the first in a non-first chunk, and the last message in the previous chunk is relevant
+            } else if (j == 0 && i != 0) {
+                if (data[i-1].use[previousLength-1]) {
+                    addChunk = true;
+                } else {
+                    childMessages.eq(j).css('display', 'none');
+                }
 
-                    /*
-                     * emma please add context across chunks, probably going to be hacky
-                     */
+            //Case 3: The message is the last in a non-last chunk, and the first message in the chunk after it is relevant
+            } else if (j == currentLength - 1 && i < len - 1) {
+                if (data[i+1].use[0]) {
+                    addChunk = true;
+                } else {
+                    childMessages.eq(j).css('display', 'none');
+                }
+
+            //Case 4: The message is is directly before or after a relevant message in the same chunk 
+            } else {
+                //Hide any messages in the chunk that aren't directly before or after it
+                if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
                     addChunk = true;
                 } else {
                     childMessages.eq(j).css('display', 'none');
