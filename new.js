@@ -14,7 +14,7 @@ const Filters = {
     childMessages: '.clearfix._o46._3erg',
     messageSpan: '[class="_3oh- _58nk"]',
     react: '._4kf5._4kf6',
-    seen: '._4jzq._jf4',
+    seen: '[class="_4jzq _jf4"]',
 }
 
 chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items) {
