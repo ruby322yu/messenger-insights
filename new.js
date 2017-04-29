@@ -11,7 +11,7 @@ chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items)
     if(typeof items.ignore_friends !== 'undefined') ignore_friends = items.ignore_friends;
 })
 
-$(document).on('click', '._5742._1_fz'/*'._5f0v._4wzs'*/, function(e) {
+$(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
     const messages = $('[aria-label="Messages"]').eq(0);
     const messageList = messages.children('[id^="js_"]').eq(0);
     // console.log(topics);
@@ -41,8 +41,8 @@ $(document).on('click', '._5742._1_fz'/*'._5f0v._4wzs'*/, function(e) {
                     numReacts = 0;
                 } 
                 const string = span.prop('innerText');
-                // sp an is the element, string contains the actual message string
-                //messageStrings.push(string);
+                // span is the element, string contains the actual message string
+                // messageStrings.push(string);
                 
                 // modify the div
                 sendData.messages.push(div);
@@ -61,6 +61,9 @@ $(document).on('click', '._5742._1_fz'/*'._5f0v._4wzs'*/, function(e) {
             child.css('background-color', 'orange');
         }
     };
+
+    popup(sendData);
+
 });
 
 function important(text, sender, reacts){
@@ -91,5 +94,43 @@ function popup(data) {
     const messages = data.messages;
     const use = data.use;
 
-    // make the popup display
+    // var bmdiv = document.createElement('div');
+    // bmdiv.setAttribute('id', 'myDiv');
+
+    // var str = bmdiv.innerHTML = str;
+
+    $("body").append(`
+        <div id="wholeModal" class="_10 _4ebx uiLayer _4-hy _3qw" style="min-width: 886px;">
+            <div class="_3ixn"></div>
+            <div class="_59s7" role="dialog" style="width: 544px; margin-top: 131px;">
+                <div class="_4t2a">
+                    <div class="_4eby _2c9i">
+                        <h2 class="_4ebz">
+                            <div class="_19jt">
+                                <em class="_4qba" data-intl-translation="Settings" data-intl-trid="">
+                                    Hello World
+                                </em>
+                            </div>
+                            <span class="_30vt">
+                                <button class="_3quh _30yy _2t_ _5ixy" tabindex="0">
+                                    <em id="closeModal" data-intl-translation="Done" data-intl-trid="">
+                                        Done
+                                    </em>
+                                </button>
+                            </span>
+                        </h2>
+                        <div class="_374b">
+                            hello world
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    );
+    $('body').on('click', '#closeModal', function() {
+        $('#wholeModal').remove();
+    });
+    $('body').on('click', '._3ixn', function() {
+        $('#wholeModal').remove();
+    });
 }
