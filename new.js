@@ -122,8 +122,8 @@ function popup(data) {
                                 </button>
                             </span>
                         </h2>
-                        <div style="overflow-y:scroll; height:400px; font-size:14px">
-                            <div id="insert" style="margin-left:10px; padding-left:10px">
+                        <div style="overflow-y:scroll; height:400px; font-size:14px; background-color:#999999">
+                            <div id="insert" style="margin-left:0px; padding-left:0px; margin-top:10px;">
                             </div>
                         </div>
                     </div>
@@ -150,7 +150,7 @@ function popup(data) {
         for (let j = 0; j < childMessages.length; j++) {
             if (data[i].use[j]) {
                 // show message - relevant
-                childMessages.eq(j).find(Filters.messageSpan).eq(0).css('background-color', 'yellow');
+                //childMessages.eq(j).find(Filters.messageSpan).eq(0).css('background-color', 'yellow');
                 addChunk = true;
             } else {
                 if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
@@ -165,8 +165,10 @@ function popup(data) {
                 }
             }
         }
-        if (addChunk)
-            $("#insert").append(data[i].chunk);
+        if (addChunk) {
+	    //$(".clearfix").css("background-color", "white");
+            $("#insert").append($(data[i].chunk).css({"background-color": "white", "padding-top" : "5px", "padding-bottom" : "0px"}));
+	}
     }
     $("#insert").find(Filters.seen).eq(0).css('display', 'none');
     $('body').on('click', '#closeModal', function() {
