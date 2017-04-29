@@ -7,6 +7,16 @@ let ignore_friends = [];
 let min_reacts = 2;
 let always_ignore = false;
 
+const Filters = {
+    unreadMessagesButton: '._5f0v._4wzs',
+    messages: '[aria-label="Messages"]',
+    messageList: '[id^="js_"]',
+    childMessages: '.clearfix._o46._3erg',
+    messageSpan: '[class="_3oh- _58nk"]',
+    react: '._4kf5._4kf6',
+    seen: '._4jzq._jf4',
+}
+
 chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items) {
     if(typeof items.topics !== 'undefined') topics = items.topics;
     if(typeof items.friends !== 'undefined') friends = items.friends;
@@ -15,9 +25,9 @@ chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items)
     if(typeof items.always_ignore !== 'undefined') always_ignore = items.always_ignore;
 })
 
-$(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
-    const messages = $('[aria-label="Messages"]').eq(0);
-    const messageList = messages.children('[id^="js_"]').eq(0);
+$(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
+    const messages = $(Filters.messages).eq(0);
+    const messageList = messages.children(Filters.messageList).eq(0);
     // scrape through your messages for important messages
     const sendData = [];
     for (const i in messageList.children()) {
@@ -32,11 +42,11 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
             };
             let sendCurr = false;
             
-            const childMessages = child.find('.clearfix._o46._3erg');
+            const childMessages = child.find(Filters.childMessages);
             for (let m = 0; m < childMessages.length; m++){
                 const div = childMessages.eq(m);
-                const span = div.find('[class="_3oh- _58nk"]').eq(0);
-                const react = div.find('._4kf5._4kf6').eq(0);
+                const span = div.find(Filters.messageSpan).eq(0);
+                const react = div.find(Filters.react).eq(0);
                 if (react){
                     numReacts = react.prop('innerText');
                 }
@@ -129,17 +139,17 @@ function popup(data) {
     for (let i = 0, len = data.length; i < len; i++) {
         console.log(data[i]);
         $("#insert").append(data[i].outer);
-        const childMessages = data[i].outer.find('.clearfix._o46._3erg');
+        const childMessages = data[i].outer.find(Filters.childMessages);
         for (let j = 0; j < childMessages.length; j++) {
             if (data[i].use[j]) {
-                childMessages.eq(j).find('._3oh-._58nk').eq(0).css('background-color', 'yellow');
+                childMessages.eq(j).find(Filters.messageSpan).eq(0).css('background-color', 'yellow');
             } else if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
             } else {
                 childMessages.eq(j).css('display', 'none');
             }
         }
     }
-    $("#insert").find('._4jzq._jf4').eq(0).css('display', 'none');
+    $("#insert").find(Filters.seen).eq(0).css('display', 'none');
     $('body').on('click', '#closeModal', function() {
         $('#wholeModal').remove();
     });
