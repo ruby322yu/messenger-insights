@@ -4,19 +4,20 @@
 let topics = [];
 let friends = [];
 let ignore_friends = [];
+let min_reacts = 2;
+let always_ignore = false;
 
 chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items) {
     if(typeof items.topics !== 'undefined') topics = items.topics;
     if(typeof items.friends !== 'undefined') friends = items.friends;
     if(typeof items.ignore_friends !== 'undefined') ignore_friends = items.ignore_friends;
+    if(typeof items.min_reacts !== 'undefined') min_reacts = items.min_reacts;
+    if(typeof items.always_ignore !== 'undefined') always_ignore = items.always_ignore;
 })
 
 $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
     const messages = $('[aria-label="Messages"]').eq(0);
     const messageList = messages.children('[id^="js_"]').eq(0);
-    // console.log(topics);
-    // console.log(friends);
-    // console.log(ignore_friends);
     // scrape through your messages for important messages
     const sendData = {
         messages: [],
@@ -70,10 +71,10 @@ function important(text, sender, reacts){
     if (!text){
         return false;
     }
-    if (ignore_friends.indexOf(sender) > -1){
+    if (always_ignore && ignore_friends.indexOf(sender) > -1){
         return false;
     }
-    if (numReacts > 1) {
+    if (numReacts >= min_reacts) {
         return true;
     }
 
@@ -82,11 +83,17 @@ function important(text, sender, reacts){
         return true;
     }
     
+
+    if (ignore_friends.indexOf(sender) > -1){
+        return false;
+    }
+    
     for (const topic of topics){
         if (text.includes(topic)){
           return true;
         }
     }
+
     return false;
 }
 

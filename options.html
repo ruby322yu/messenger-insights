@@ -2,8 +2,9 @@
 <html>
 <head><title>Options</title>
  <style>
-    body: { padding: 10px; }
-    .btn {
+    body: { padding: 10px; 
+    	font-size: 12px;}
+    button {
 	  background: #3498db;
 	  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
 	  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
@@ -20,7 +21,7 @@
 	  text-decoration: none;
 	}
 
-	.btn:hover {
+	button:hover {
 	  background: #3cb0fd;
 	  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
 	  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
@@ -28,7 +29,7 @@
 	  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
 	  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
 	  text-decoration: none;
-	}
+	}	
   </style>
   </head>
 <body>
@@ -38,7 +39,14 @@ Keywords (separated by commas):
 People to follow:
 <input type="text" id="friends"> <br>
 People to ignore:
-<input type="text" id="ignore">
+<input type="text" id="ignore"> <br>
+<label>
+    <input type="checkbox" id="always_ignore">
+    Always ignore messages from people in ignore list (even when it fits other important criterias)
+  </label>
+  <br>
+Minimum number of reacts:
+<input type="number" id="reacts">
 <div id="status"></div>
 <button id="save">Save</button>
 </div>
