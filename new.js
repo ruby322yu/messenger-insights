@@ -1,33 +1,43 @@
 $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
     const messages = $('[aria-label="Messages"]').eq(0);
-    console.log(messages);
     const messageList = messages.children('[id^="js_"]').eq(0);
-    console.log(messageList);
+
+    // scrape through your messages for important messages
+    let messageStrings = [];
     for (const i in messageList.children()) {
         const child = messageList.children().eq(i);
         if (child.prop('tagName') === 'DIV') {
-            // child.children('._3oh-_58nk').each(function() {
-            //     console.log(child.innerText);
-            //     child.css('background-color', 'green');
-            // });
             console.log("found");
             
             //console.log(messages);
-            const allmessages = child.find('[class="_3oh- _58nk"]');
-            for (let m = 0; m < allmessages.length; m++){
-                const message = allmessages.eq(m);
-
-                console.log(message.prop('innerText'));
-                message.css('background-color', 'green');
+            const childMessages = child.find('[class="_3oh- _58nk"]');
+            for (let m = 0; m < childMessages.length; m++){
+                const span = childMessages.eq(m);
+                const string = span.prop('innerText');
+                messageStrings.push(string);
+                
+                if (important(string)) {
+                    span.css('background-color', 'yellow');
+                }
             }
-            child.css('background-color', 'red');
+            // child.css('background-color', 'red');
         } else if (child.prop('tagName') === 'H4') {
             console.log("New time");
             child.css('background-color', 'blue');
         }
     };
+
+    // messageStrings contains all the message texts;
+    for (const str of messageStrings) {
+        // display however
+        if (important(str)) {
+            console.log(str);
+        }
+    }
 });
 
 function important(text){
+    if (text.length > 1)
+        return true;
     return false;
 }
