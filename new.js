@@ -37,7 +37,7 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
             const senderName = sender.eq(0).prop("innerText");
             // found a messsage chunk, iterate through to get individual messages
             const curr = {
-                outer: child.clone(),
+                chunk: child.clone(),
                 use: [],
             };
             let sendCurr = false;
@@ -136,16 +136,37 @@ function popup(data) {
         </div>`
     );
 
+    /*
+     * data is in the format
+     *  [{
+     *    chunk: <div>...</div>
+     *    use: [],
+     *  }]
+     * 
+     * We append the entire chunk immediately,
+     * then iterate through each of the messages and check use[] to see which ones we ignore
+     * we do some complicated shit to give context across chunks
+     */
+
     for (let i = 0, len = data.length; i < len; i++) {
-        console.log(data[i]);
-        $("#insert").append(data[i].outer);
-        const childMessages = data[i].outer.find(Filters.childMessages);
+        // append chunk immediately
+        $("#insert").append(data[i].chunk);
+        const childMessages = data[i].chunk.find(Filters.childMessages);
         for (let j = 0; j < childMessages.length; j++) {
             if (data[i].use[j]) {
+                // show message - relevant
                 childMessages.eq(j).find(Filters.messageSpan).eq(0).css('background-color', 'yellow');
-            } else if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
             } else {
-                childMessages.eq(j).css('display', 'none');
+                if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
+                    // show message as context for a relevant message
+
+                    /*
+                     * emma please add context across chunks, probably going to be hacky
+                     */
+
+                } else {
+                    childMessages.eq(j).css('display', 'none');
+                }
             }
         }
     }
