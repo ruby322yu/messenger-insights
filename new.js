@@ -15,6 +15,7 @@ const Filters = {
     messageSpan: '[class="_3oh- _58nk"]',
     react: '._4kf5._4kf6',
     seen: '[class="_4jzq _jf4"]',
+    tooltip: '._3058._ui9._hh7',
 }
 
 chrome.storage.sync.get(['ignore_friends', 'topics', 'friends', 'min_reacts', 'always_ignore'], function(items) {
@@ -52,7 +53,7 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
                     numReacts = react.prop('innerText');
                 } else {
                     numReacts = 0;
-                } 
+                }
                 const string = span.prop('innerText');
                 // span is the element, string contains the actual message string
                 // messageStrings.push(string);
@@ -84,15 +85,20 @@ function important(text, sender, reacts){
         return true;
     }
 
-    text = text.toLowerCase();
     if (friends.indexOf(sender)> -1) {
         return true;
     }
-    
+
     if (ignore_friends.indexOf(sender) > -1){
         return false;
     }
     
+    text = text.toLowerCase();
+    for (const friend of friends) {
+        if (text.includes(friend.toLowerCase())) {
+            return true;
+        }
+    }
     for (const topic of topics){
         if (text.includes(topic)){
             return true;
@@ -158,7 +164,7 @@ function popup(data) {
             //Case 1: The message is relevant and so we must highlight it
             if (data[i].use[j]) {
                 //If a message is relevant, then we highlight it
-                childMessages.eq(j).find(Filters.messageSpan).eq(0).css('background-color', 'yellow');
+                childMessages.eq(j).find(Filters.tooltip).eq(0).css('background-color', 'yellow');
                 addChunk = true;
             
             //Case 2: The message is the first in a non-first chunk, and the last message in the previous chunk is relevant
@@ -187,8 +193,11 @@ function popup(data) {
                 }
             }
         }
-        if (addChunk)
-            $("#insert").append(data[i].chunk);
+        if (addChunk) {
+            const sep = $('<h4>').addClass('_497p _2lpt')
+                .append(data[i].chunk.find(Filters.tooltip).eq(0).attr('data-tooltip-content'));
+            $("#insert").append(sep).append(data[i].chunk);
+        }
     }
     $("#insert").find(Filters.seen).eq(0).css('display', 'none');
     $('body').on('click', '#closeModal', function() {
