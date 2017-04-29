@@ -17,13 +17,15 @@ const Filters = {
     seen: '[class="_4jzq _jf4"]',
 }
 
-chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items) {
+chrome.storage.sync.get(['ignore_friends', 'topics', 'friends', 'min_reacts', 'always_ignore'], function(items) {
     if(typeof items.topics !== 'undefined') topics = items.topics;
     if(typeof items.friends !== 'undefined') friends = items.friends;
     if(typeof items.ignore_friends !== 'undefined') ignore_friends = items.ignore_friends;
     if(typeof items.min_reacts !== 'undefined') min_reacts = items.min_reacts;
     if(typeof items.always_ignore !== 'undefined') always_ignore = items.always_ignore;
 })
+
+console.log(min_reacts);
 
 $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
     const messages = $(Filters.messages).eq(0);
@@ -46,10 +48,9 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
                 const div = childMessages.eq(m);
                 const span = div.find(Filters.messageSpan).eq(0);
                 const react = div.find(Filters.react).eq(0);
-                if (react){
+                if (react.prop('innerText')) {
                     numReacts = react.prop('innerText');
-                }
-                else{
+                } else {
                     numReacts = 0;
                 } 
                 const string = span.prop('innerText');
@@ -57,6 +58,7 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
                 // messageStrings.push(string);
                 
                 if (important(string, senderName, numReacts)) {
+                    console.log(string, "true");
                     curr.use.push(true);
                 } else {
                     curr.use.push(false);
@@ -83,18 +85,17 @@ function important(text, sender, reacts){
     }
 
     text = text.toLowerCase();
-    if (friends.indexOf(sender)> -1){
+    if (friends.indexOf(sender)> -1) {
         return true;
     }
     
-
     if (ignore_friends.indexOf(sender) > -1){
         return false;
     }
     
     for (const topic of topics){
         if (text.includes(topic)){
-          return true;
+            return true;
         }
     }
 
