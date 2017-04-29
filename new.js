@@ -6,16 +6,17 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
     let messageStrings = [];
     for (const i in messageList.children()) {
         const child = messageList.children().eq(i);
-        if (child.prop('tagName') === 'DIV') {
-            console.log("found");
-            
-            //console.log(messages);
+        if (child.prop('tagName') === 'DIV' && !child.prop('class')) {
+            // found a messsage chunk, iterate through to get individual messages
             const childMessages = child.find('[class="_3oh- _58nk"]');
             for (let m = 0; m < childMessages.length; m++){
                 const span = childMessages.eq(m);
                 const string = span.prop('innerText');
+
+                // span is the element, string contains the actual message string
                 messageStrings.push(string);
                 
+                // modify the span
                 if (important(string)) {
                     span.css('background-color', 'yellow');
                 }
@@ -24,6 +25,8 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
         } else if (child.prop('tagName') === 'H4') {
             console.log("New time");
             child.css('background-color', 'blue');
+        } else {
+            child.css('background-color', 'orange');
         }
     };
 
