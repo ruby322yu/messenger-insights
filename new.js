@@ -1,4 +1,4 @@
-const name = "Ruby";
+const name = "ruby";
 const topics = ["hackathons", "facebook", "food"];
 const friends = ["Henry", "Emma"];
 const ignore_friends = ["James"];
@@ -15,15 +15,19 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
             const sender = child.find('h5');
             const senderName = sender.eq(0).prop("innerText");
             // found a messsage chunk, iterate through to get individual messages
-            const childMessages = child.find('[class="_3oh- _58nk"]');
+            const childMessages = child.find('.clearfix');
+            // const childMessages = child.find('[class="_3oh- _58nk"]');
             for (let m = 0; m < childMessages.length; m++){
-                const span = childMessages.eq(m);
+                const div = childMessages.eq(m);
+                const span = div.find('[class="_3oh- _58nk"]').eq(0);
                 const string = span.prop('innerText');
                 // span is the element, string contains the actual message string
                 messageStrings.push(string);
-                // modify the span
-                if (important(string, senderName)) {
-                    span.css('background-color', 'yellow');
+                
+                // modify the div
+                if (!important(string, senderName)) {
+                    div.css('display', 'none');
+                    console.log(string);
                 }
             }
             // child.css('background-color', 'red');
@@ -45,6 +49,9 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
 });
 
 function important(text, sender){
+    if (!text){
+        return false;
+    }
     text = text.toLowerCase();
     if (text.includes(name)){
         return true;
@@ -55,10 +62,10 @@ function important(text, sender){
     if (ignore_friends.indexOf(sender) > -1){
         return false;
     }
-    // for (const topic: topics){
-    //     if (text.includes(topic)){
-    //       return true;
-    //     }
-    // }
+     for (const topic of topics){
+        if (text.includes(topic)){
+          return true;
+        }
+    }
     return false;
 }
