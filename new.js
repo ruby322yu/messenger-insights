@@ -1,12 +1,22 @@
-const name = "ruby";
-const topics = ["hackathons", "facebook", "food"];
-const friends = ["Henry", "Emma"];
-const ignore_friends = ["James"];
+//const topics = ["hackathons", "facebook", "food"];
+//const friends = ["Henry", "Emma"];
+//const ignore_friends = ["James"];
+let topics = [];
+let friends = [];
+let ignore_friends = [];
+
+chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items) {
+    if(typeof items.topics !== 'undefined') topics = items.topics;
+    if(typeof items.friends !== 'undefined') friends = items.friends;
+    if(typeof items.ignore_friends !== 'undefined') ignore_friends = items.ignore_friends;
+})
 
 $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
     const messages = $('[aria-label="Messages"]').eq(0);
     const messageList = messages.children('[id^="js_"]').eq(0);
-
+    // console.log(topics);
+    // console.log(friends);
+    // console.log(ignore_friends);
     // scrape through your messages for important messages
     let messageStrings = [];
     for (const i in messageList.children()) {
@@ -53,16 +63,13 @@ function important(text, sender){
         return false;
     }
     text = text.toLowerCase();
-    if (text.includes(name)){
-        return true;
-    }
     if (friends.indexOf(sender)> -1){
         return true;
     }
     if (ignore_friends.indexOf(sender) > -1){
         return false;
     }
-     for (const topic of topics){
+    for (const topic of topics){
         if (text.includes(topic)){
           return true;
         }
