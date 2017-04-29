@@ -117,7 +117,7 @@ function popup(data) {
                             </span>
                         </h2>
                         <div style="overflow-y:scroll; height:400px; font-size:14px">
-                            <div id="insert">
+                            <div id="insert" style="margin-left:10px; padding-left:10px">
                             </div>
                         </div>
                     </div>
@@ -131,11 +131,15 @@ function popup(data) {
         $("#insert").append(data[i].outer);
         const childMessages = data[i].outer.find('.clearfix._o46._3erg');
         for (let j = 0; j < childMessages.length; j++) {
-            if (!data[i].use[j]) {
+            if (data[i].use[j]) {
+                childMessages.eq(j).find('._3oh-._58nk').eq(0).css('background-color', 'yellow');
+            } else if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
+            } else {
                 childMessages.eq(j).css('display', 'none');
             }
         }
     }
+    $("#insert").find('._4jzq._jf4').eq(0).css('display', 'none');
     $('body').on('click', '#closeModal', function() {
         $('#wholeModal').remove();
     });
