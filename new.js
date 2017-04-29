@@ -33,13 +33,20 @@ $(document).on('click', '._5742._1_fz'/*'._5f0v._4wzs'*/, function(e) {
             for (let m = 0; m < childMessages.length; m++){
                 const div = childMessages.eq(m);
                 const span = div.find('[class="_3oh- _58nk"]').eq(0);
+                const react = div.find('._4kf5._4kf6').eq(0);
+                if (react){
+                    numReacts = react.prop('innerText');
+                }
+                else{
+                    numReacts = 0;
+                } 
                 const string = span.prop('innerText');
-                // span is the element, string contains the actual message string
-                messageStrings.push(string);
+                // sp an is the element, string contains the actual message string
+                //messageStrings.push(string);
                 
                 // modify the div
                 sendData.messages.push(div);
-                if (important(string, senderName)) {
+                if (important(string, senderName, numReacts)) {
                     span.css('background-color', 'yellow');
                     sendData.use.push(true);
                 } else {
@@ -56,17 +63,22 @@ $(document).on('click', '._5742._1_fz'/*'._5f0v._4wzs'*/, function(e) {
     };
 });
 
-function important(text, sender){
+function important(text, sender, reacts){
     if (!text){
         return false;
-    }
-    text = text.toLowerCase();
-    if (friends.indexOf(sender)> -1){
-        return true;
     }
     if (ignore_friends.indexOf(sender) > -1){
         return false;
     }
+    if (numReacts > 1) {
+        return true;
+    }
+
+    text = text.toLowerCase();
+    if (friends.indexOf(sender)> -1){
+        return true;
+    }
+    
     for (const topic of topics){
         if (text.includes(topic)){
           return true;
