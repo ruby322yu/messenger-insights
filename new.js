@@ -106,6 +106,9 @@ function popup(data) {
 
     // var str = bmdiv.innerHTML = str;
 
+
+    let output = messages[0];
+
     $("body").append(`
         <div id="wholeModal" class="_10 _4ebx uiLayer _4-hy _3qw" style="min-width: 886px;">
             <div class="_3ixn"></div>
@@ -115,7 +118,7 @@ function popup(data) {
                         <h2 class="_4ebz">
                             <div class="_19jt">
                                 <em class="_4qba" data-intl-translation="Settings" data-intl-trid="">
-                                    Hello World
+                                    Your message queue
                                 </em>
                             </div>
                             <span class="_30vt">
@@ -126,14 +129,23 @@ function popup(data) {
                                 </button>
                             </span>
                         </h2>
-                        <div class="_374b">
-                            hello world
+                        <div id="js_1" style="overflow-y: scroll; height:400px;">
+                            <div class="_374b" style="height:100%" >
+                            
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>`
     );
+
+    for (let i = 0, len = messages.length; i < len; i++) {
+	console.log(use[i], messages[i]);
+	if (use[i]) {
+	    $("._374b").append(messages[i]);
+	} 
+    }
     $('body').on('click', '#closeModal', function() {
         $('#wholeModal').remove();
     });
