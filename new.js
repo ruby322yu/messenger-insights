@@ -40,7 +40,6 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
                 chunk: child.clone(),
                 use: [],
             };
-            let sendCurr = false;
             
             const childMessages = child.find(Filters.childMessages);
             for (let m = 0; m < childMessages.length; m++){
@@ -58,14 +57,12 @@ $(document).on('click', '._4qba'/*Filters.unreadMessagesButton*/, function(e) {
                 // messageStrings.push(string);
                 
                 if (important(string, senderName, numReacts)) {
-                    curr.use.push(true);
                     sendCurr = true;
                 } else {
                     curr.use.push(false);
                 }
             }
-            if (sendCurr)
-                sendData.push(curr);
+            sendData.push(curr);
         } else if (child.prop('tagName') === 'H4') {
             console.log("New time");
         }
@@ -149,13 +146,13 @@ function popup(data) {
      */
 
     for (let i = 0, len = data.length; i < len; i++) {
-        // append chunk immediately
-        $("#insert").append(data[i].chunk);
         const childMessages = data[i].chunk.find(Filters.childMessages);
+        let addChunk = false;
         for (let j = 0; j < childMessages.length; j++) {
             if (data[i].use[j]) {
                 // show message - relevant
                 childMessages.eq(j).find(Filters.messageSpan).eq(0).css('background-color', 'yellow');
+                addChunk = true;
             } else {
                 if ((j > 1 && data[i].use[j-1]) || (j < childMessages.length-1 && data[i].use[j+1])) {
                     // show message as context for a relevant message
@@ -163,12 +160,14 @@ function popup(data) {
                     /*
                      * emma please add context across chunks, probably going to be hacky
                      */
-
+                    addChunk = true;
                 } else {
                     childMessages.eq(j).css('display', 'none');
                 }
             }
         }
+        if (addChunk)
+            $("#insert").append(data[i].chunk);
     }
     $("#insert").find(Filters.seen).eq(0).css('display', 'none');
     $('body').on('click', '#closeModal', function() {
