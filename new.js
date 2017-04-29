@@ -11,6 +11,15 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
             //     child.css('background-color', 'green');
             // });
             console.log("found");
+            
+            //console.log(messages);
+            const allmessages = child.find('[class="_3oh- _58nk"]');
+            for (let m = 0; m < allmessages.length; m++){
+                const message = allmessages.eq(m);
+
+                console.log(message.prop('innerText'));
+                message.css('background-color', 'green');
+            }
             child.css('background-color', 'red');
         } else if (child.prop('tagName') === 'H4') {
             console.log("New time");
@@ -18,3 +27,7 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
         }
     };
 });
+
+function important(text){
+    return false;
+}
