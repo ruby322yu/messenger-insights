@@ -11,7 +11,7 @@ chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items)
     if(typeof items.ignore_friends !== 'undefined') ignore_friends = items.ignore_friends;
 })
 
-$(document).on('click', '._5742._1_fz'/*'._5f0v._4wzs'*/, function(e) {
+$(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
     const messages = $('[aria-label="Messages"]').eq(0);
     const messageList = messages.children('[id^="js_"]').eq(0);
     // console.log(topics);
