@@ -18,18 +18,20 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
     // console.log(friends);
     // console.log(ignore_friends);
     // scrape through your messages for important messages
-    const sendData = {
-        messages: [],
-        use: [],
-    }
+    const sendData = [];
     for (const i in messageList.children()) {
         const child = messageList.children().eq(i);
         if (child.prop('tagName') === 'DIV' && !child.prop('class')) {
             const sender = child.find('h5');
             const senderName = sender.eq(0).prop("innerText");
             // found a messsage chunk, iterate through to get individual messages
-            const childMessages = child.find('.clearfix');
-            // const childMessages = child.find('[class="_3oh- _58nk"]');
+            const curr = {
+                outer: child.clone(),
+                use: [],
+            };
+            let sendCurr = false;
+            
+            const childMessages = child.find('.clearfix._o46._3erg');
             for (let m = 0; m < childMessages.length; m++){
                 const div = childMessages.eq(m);
                 const span = div.find('[class="_3oh- _58nk"]').eq(0);
@@ -44,21 +46,17 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
                 // span is the element, string contains the actual message string
                 // messageStrings.push(string);
                 
-                // modify the div
-                sendData.messages.push(div);
                 if (important(string, senderName, numReacts)) {
-                    span.css('background-color', 'yellow');
-                    sendData.use.push(true);
+                    curr.use.push(true);
+                    sendCurr = true;
                 } else {
-                    sendData.use.push(false);
+                    curr.use.push(false);
                 }
             }
-            // child.css('background-color', 'red');
+            if (sendCurr)
+                sendData.push(curr);
         } else if (child.prop('tagName') === 'H4') {
             console.log("New time");
-            child.css('background-color', 'blue');
-        } else {
-            child.css('background-color', 'orange');
         }
     };
 
@@ -91,19 +89,8 @@ function important(text, sender, reacts){
 }
 
 function popup(data) {
-    const messages = data.messages;
-    const use = data.use;
-
-    // var bmdiv = document.createElement('div');
-    // bmdiv.setAttribute('id', 'myDiv');
-
-    // var str = bmdiv.innerHTML = str;
-
-
-    let output = messages[0];
-
     $("body").append(`
-        <div id="wholeModal" class="_10 _4ebx uiLayer _4-hy _3qw" style="min-width: 886px;">
+        <div id="wholeModal" class="_10 _4ebx uiLayer _4-hy _3qw" style="min-width: 906px;">
             <div class="_3ixn"></div>
             <div class="_59s7" role="dialog" style="width: 544px; margin-top: 131px;">
                 <div class="_4t2a">
@@ -122,9 +109,8 @@ function popup(data) {
                                 </button>
                             </span>
                         </h2>
-                        <div id="js_1" style="overflow-y: scroll; height:400px;">
-                            <div class="_374b" style="height:100%" >
-                            
+                        <div style="overflow-y:scroll; height:400px; font-size:14px">
+                            <div id="insert">
                             </div>
                         </div>
                     </div>
@@ -133,11 +119,15 @@ function popup(data) {
         </div>`
     );
 
-    for (let i = 0, len = messages.length; i < len; i++) {
-	console.log(use[i], messages[i]);
-	if (use[i]) {
-	    $("._374b").append(messages[i]);
-	} 
+    for (let i = 0, len = data.length; i < len; i++) {
+        console.log(data[i]);
+        $("#insert").append(data[i].outer);
+        const childMessages = data[i].outer.find('.clearfix._o46._3erg');
+        for (let j = 0; j < childMessages.length; j++) {
+            if (!data[i].use[j]) {
+                childMessages.eq(j).css('display', 'none');
+            }
+        }
     }
     $('body').on('click', '#closeModal', function() {
         $('#wholeModal').remove();
