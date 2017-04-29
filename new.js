@@ -11,14 +11,17 @@ chrome.storage.sync.get(['ignore_friends', 'topics', 'friends'], function(items)
     if(typeof items.ignore_friends !== 'undefined') ignore_friends = items.ignore_friends;
 })
 
-$(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
+$(document).on('click', '._5742._1_fz'/*'._5f0v._4wzs'*/, function(e) {
     const messages = $('[aria-label="Messages"]').eq(0);
     const messageList = messages.children('[id^="js_"]').eq(0);
     // console.log(topics);
     // console.log(friends);
     // console.log(ignore_friends);
     // scrape through your messages for important messages
-    let messageStrings = [];
+    const sendData = {
+        messages: [],
+        use: [],
+    }
     for (const i in messageList.children()) {
         const child = messageList.children().eq(i);
         if (child.prop('tagName') === 'DIV' && !child.prop('class')) {
@@ -35,9 +38,12 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
                 messageStrings.push(string);
                 
                 // modify the div
-                if (!important(string, senderName)) {
-                    div.css('display', 'none');
-                    console.log(string);
+                sendData.messages.push(div);
+                if (important(string, senderName)) {
+                    span.css('background-color', 'yellow');
+                    sendData.use.push(true);
+                } else {
+                    sendData.use.push(false);
                 }
             }
             // child.css('background-color', 'red');
@@ -48,14 +54,6 @@ $(document).on('click', '._4qba'/*'._5f0v._4wzs'*/, function(e) {
             child.css('background-color', 'orange');
         }
     };
-
-    // // messageStrings contains all the message texts;
-    // for (const str of messageStrings) {
-    //     // display however
-    //     if (important(str)) {
-    //         console.log(str);
-    //     }
-    // }
 });
 
 function important(text, sender){
@@ -75,4 +73,11 @@ function important(text, sender){
         }
     }
     return false;
+}
+
+function popup(data) {
+    const messages = data.messages;
+    const use = data.use;
+
+    // make the popup display
 }
